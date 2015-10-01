@@ -32,7 +32,7 @@ abstract class DataObject {
      * @param $id
      * @return DataObject
      */
-    public static function findById($id) {
+    public static function getById($id) {
         /**
          * @var $db \PDO
          */
