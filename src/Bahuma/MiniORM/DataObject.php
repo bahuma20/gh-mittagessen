@@ -121,18 +121,18 @@ abstract class DataObject {
         // Prepare query
         $stmt = $db->prepare($query);
 
-        // Set values in the query
+        // Get values from Object
+        $values = array();
         $i = 0;
         foreach ($mFields as $field_name) {
             $i++;
 
             $getter = "get" . str_replace(' ', '', ucwords(str_replace('_', ' ', $field_name)));
-            $value = $this->$getter();
-            $stmt->bindParam($i, $value);
+            $values[] = $this->$getter();
         }
 
         // Write to database
-        $stmt->execute();
+        $stmt->execute($values);
 
         // Set id to the DataOject
         $this->setId($db->lastInsertId());
