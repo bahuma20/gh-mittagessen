@@ -125,7 +125,8 @@ abstract class DataObject {
             $i++;
 
             $getter = "get" . str_replace(' ', '', ucwords(str_replace('_', ' ', $field_name)));
-            $stmt->bindParam($i, $this->$getter());
+            $value = $this->$getter();
+            $stmt->bindParam($i, $value);
         }
 
         // Write to database
