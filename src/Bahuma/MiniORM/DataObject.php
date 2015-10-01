@@ -69,6 +69,7 @@ abstract class DataObject {
         return $object;
     }
 
+
     public static function getAll() {
         /**
          * @var $db \PDO
@@ -91,8 +92,7 @@ abstract class DataObject {
             $objects[] = $classname::getById($objectId['id']);
         }
 
-        print '<html><pre>';
-        print_r($objects);
+        return $objects;
     }
 
     /**
