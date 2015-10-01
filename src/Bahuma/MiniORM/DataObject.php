@@ -69,6 +69,32 @@ abstract class DataObject {
         return $object;
     }
 
+    public static function getAll() {
+        /**
+         * @var $db \PDO
+         */
+        global $db;
+
+        // Get static properties from sub class
+        $classname = get_called_class();
+        $classVars = get_class_vars($classname);
+
+        // Prepare SELECT
+        $stmt = $db->prepare("SELECT id FROM ". $classVars['tableName']);
+        $stmt->execute();
+
+        $objectIds = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+
+        $objects = array();
+
+        foreach ($objectIds as $objectId) {
+            $objects[] = $classname::getById($objectId['id']);
+        }
+
+        print '<html><pre>';
+        print_r($objects);
+    }
+
     /**
      * Saves an Object to the Database
      * @return DataObject
