@@ -1,0 +1,21 @@
+{
+  "name": "bahuma/gh-mittagessen",
+  "description": "Organize Meals in the office",
+  "minimum-stability": "dev",
+  "license": "proprietary",
+  "authors": [
+    {
+      "name": "Max Bachhuber",
+      "email": "bahuma20@bahuma.io"
+    }
+  ],
+  "require": {
+    "nesbot/carbon": "1.20.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "Bahuma\\GHMittagessen\\": "src/Bahuma/GHMittagessen/",
+      "Bahuma\\MiniORM\\": "src/Bahuma/MiniORM/"
+    }
+  }
+}
