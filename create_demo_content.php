@@ -52,4 +52,4 @@ $participation->setOffer($offer1->getId());
 $participation->setOrder("Einmal 2 halbe Hahn.");
 $participation->save();
 
-print "Created Participation at Order 1 with id " . $participation->getId();
+print "Created Participation at Offer 1 with id " . $participation->getId();
