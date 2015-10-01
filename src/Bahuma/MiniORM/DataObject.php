@@ -97,7 +97,7 @@ abstract class DataObject {
         // Add fields to query
         $i = 0;
         foreach ($mFields as $field) {
-            $query .= $field;
+            $query .= '`'. $field . '`';
 
             if (++$i !== count($mFields))
                 $query .= ', ';
