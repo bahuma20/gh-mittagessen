@@ -1,7 +1,7 @@
 <?php
 namespace Bahuma\MiniORM;
 
-abstract class DataObject {
+abstract class DataObject implements \JsonSerializable {
     /**
      * @var string
      */
@@ -168,6 +168,23 @@ abstract class DataObject {
 
         return $this;
     }
+
+    function jsonSerialize()
+    {
+        // Get static properties from sub class
+        $classname = get_called_class();
+        $classVars = get_class_vars($classname);
+
+        $result = array();
+
+        foreach($classVars['fields'] as $field_name) {
+            $getter = "get" . str_replace(' ', '', ucwords(str_replace('_', ' ', $field_name)));
+            $result[$field_name] = $this->$getter();
+        }
+
+        return $result;
+    }
+
 
     /**
      * @return mixed
