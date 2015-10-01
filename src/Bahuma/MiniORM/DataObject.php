@@ -30,6 +30,7 @@ abstract class DataObject {
 
     /**
      * @param $id
+     * @return DataObject
      */
     public static function findById($id) {
         /**
@@ -70,6 +71,7 @@ abstract class DataObject {
 
     /**
      * Saves an Object to the Database
+     * @return DataObject
      */
     public function save() {
         if (!$this->isNew) {
@@ -137,6 +139,8 @@ abstract class DataObject {
 
         // Declare this DataObject as not new
         $this->setIsNew(false);
+
+        return $this;
     }
 
     /**
