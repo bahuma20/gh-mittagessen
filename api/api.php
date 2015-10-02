@@ -26,6 +26,10 @@ $app->get('/restaurant', function() {
     outputJSON(Restaurant::getAll());
 });
 
+$app->get('/restaurant/:id', function($id){
+   outputJSON(Restaurant::getById($id));
+});
+
 $app->post('/restaurant', function() use ($app) {
     $body = json_decode($app->request->getBody());
 
@@ -38,6 +42,10 @@ $app->post('/restaurant', function() use ($app) {
 
 $app->get('/participation', function() {
     outputJSON(Participation::getAll());
+});
+
+$app->get('/participation/:id', function($id){
+    outputJSON(Participation::getById($id));
 });
 
 $app->post('/participation', function() use ($app) {
@@ -53,6 +61,15 @@ $app->post('/participation', function() use ($app) {
 $app->get('/offer', function() {
     outputJSON(Offer::getAll());
 });
+
+$app->get('/offer/:id', function($id){
+    outputJSON(Offer::getById($id));
+});
+
+$app->get('/offer/:id/participation', function($id){
+    outputJSON(Participation::getByOfferId($id));
+});
+
 
 $app->post('/offer', function() use ($app) {
     $body = json_decode($app->request->getBody());
