@@ -3,6 +3,7 @@
 use Bahuma\GHMittagessen\Offer;
 use Bahuma\GHMittagessen\Participation;
 use Bahuma\GHMittagessen\Restaurant;
+use Bahuma\GHMittagessen\User;
 
 require_once('../vendor/autoload.php');
 
@@ -79,6 +80,11 @@ $app->post('/offer', function() use ($app) {
     $offer->setRestaurant($body->restaurant);
     $offer->setOrderUntil(new \Carbon\Carbon($body->order_until));
     $offer->save();
+});
+
+
+$app->get('/user/:id', function($id) {
+    outputJSON(User::getById($id));
 });
 
 $app->run();
