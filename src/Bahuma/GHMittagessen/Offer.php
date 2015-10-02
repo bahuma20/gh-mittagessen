@@ -81,8 +81,11 @@ class Offer extends DataObject {
     /**
      * @return Carbon
      */
-    public function getOrderUntil()
+    public function getOrderUntil($forApi=false)
     {
+        if ($forApi)
+            return $this->order_until->toIso8601String();
+
         return $this->order_until;
     }
 
