@@ -42,6 +42,14 @@ class User extends DataObject {
         return $user;
     }
 
+    public function save() {
+        return false;
+    }
+
+    public static function getAll() {
+        return false;
+    }
+
     /**
      * @return mixed
      */
@@ -104,9 +112,5 @@ class User extends DataObject {
     public function setPasswordHash($passwordHash)
     {
         $this->passwordHash = $passwordHash;
-    }
-
-    public function save() {
-        return false;
     }
 }
