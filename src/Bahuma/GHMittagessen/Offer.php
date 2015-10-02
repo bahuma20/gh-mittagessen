@@ -91,6 +91,11 @@ class Offer extends DataObject {
      */
     public function setOrderUntil($order_until)
     {
+
+        if(is_string($order_until)) {
+            $order_until = new Carbon($order_until);
+        }
+
         $this->order_until = $order_until;
     }
 
