@@ -19,6 +19,11 @@ angular.module('ghMittagessen', ['ngMaterial', 'md.data.table', 'ngRoute'])
                 controller: "OffersCtrl"
             })
 
+            .when("/offers/create", {
+                templateUrl: "templates/create-offer.html",
+                controller: "CreateOfferCtrl"
+            })
+
             .when('/offers/:offer_id', {
                 templateUrl: "templates/offer.html",
                 controller: "OfferCtrl"
@@ -49,6 +54,19 @@ angular.module('ghMittagessen', ['ngMaterial', 'md.data.table', 'ngRoute'])
             }
         });
     }])
+    .filter('newlines', function () {
+        return function(text) {
+            if(text)
+                return text.replace(/\n/g, '<br/>');
+            return '';
+        }
+    })
+    .filter('unsafe', function($sce) {
+        return function(val) {
+            return $sce.trustAsHtml(val);
+
+        };
+    })
     .controller('OffersCtrl', ['$scope', '$http', function($scope, $http){
         $scope.offers = [];
 
@@ -69,11 +87,9 @@ angular.module('ghMittagessen', ['ngMaterial', 'md.data.table', 'ngRoute'])
                 // Convert date to JS Date
                 $scope.offers[key].order_until = moment($scope.offers[key].order_until);
             });
-
-            console.log( $scope.offers);
         });
     }])
-    .controller('OfferCtrl', ['$scope', '$rootScope', '$routeParams', '$http', function($scope, $rootScope, $routeParams, $http){
+    .controller('OfferCtrl', ['$scope', '$rootScope', '$routeParams', '$http', "$mdToast", function($scope, $rootScope, $routeParams, $http, $mdToast){
         $scope.participation = {};
 
         $scope.saveParticipation = function(participation, offer) {
@@ -84,6 +100,7 @@ angular.module('ghMittagessen', ['ngMaterial', 'md.data.table', 'ngRoute'])
           }).success(function(data){
               $scope.loadOffer();
               $scope.participation = {};
+              $mdToast.show($mdToast.simple().content('Bestellung wurde eingetragen').position('bottom right'));
           });
         };
 
@@ -121,6 +138,30 @@ angular.module('ghMittagessen', ['ngMaterial', 'md.data.table', 'ngRoute'])
 
         $scope.loadOffer();
 
+    }])
+    .controller("CreateOfferCtrl", ["$scope", "$rootScope", "$location", "$http", function($scope, $rootScope, $location, $http) {
+        if (!$rootScope.loggedIn)
+            $location.path("/login");
+
+
+        $scope.newOffer = {
+            tempTime: moment(moment().format("YYYY-MM-DD") + "12:00:00", "YYYY-MM-DD HH:mm:ss").toDate()
+        };
+        $scope.restaurants = [];
+
+        $http.get('../api/restaurant').success(function(data){
+            $scope.restaurants = data;
+        });
+
+        $scope.save = function(offer) {
+            offer.order_until = offer.tempTime.toISOString();
+
+            $http.post('../api/offer', {
+                restaurant: offer.restaurant,
+                user: $rootScope.loggedInUser.id,
+                order_until: offer.order_until
+            });
+        };
     }])
     .controller("LoginCtrl", ["$rootScope", "$scope", "$location", "$mdToast", "$http", function($rootScope, $scope, $location, $mdToast, $http) {
         if ($rootScope.loggedIn) {

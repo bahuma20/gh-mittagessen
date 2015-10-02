@@ -1,0 +1,27 @@
+<md-toolbar class="md-whiteframe-z2">
+    <div class="md-toolbar-tools">
+        <md-button class="md-icon-button" aria-label="Menu" href="#/offers">
+            <md-icon> arrow_back </md-icon>
+        </md-button>
+        <h2><span>Ich hole was</span></h2>
+        <span class="flex"></span>
+        <div ng-include src="'templates/includes/toolbar-user.html'"></div>
+    </div>
+</md-toolbar>
+
+<md-content class="md-padding">
+    <md-input-container>
+        <label>Restaurant</label>
+        <md-select ng-model="newOffer.restaurant">
+            <md-option ng-repeat="restaurant in restaurants|orderBy:'name'" value="{{restaurant.id}}">
+                {{restaurant.name}}
+            </md-option>
+        </md-select>
+        <!--<a href="#/restaurants/add">Neues Restaurant hinzufügen</a>-->
+    </md-input-container>
+    <md-input-container>
+        <label>Bestellung möglich bis</label>
+        <input type="time" value="12:00" ng-model="newOffer.tempTime">
+    </md-input-container>
+    <md-button class="md-primary md-raised" ng-click="save(newOffer)">Speichern</md-button>
+</md-content>
