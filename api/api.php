@@ -1,23 +1,47 @@
 <?php
 
+session_start();
+
 use Bahuma\GHMittagessen\Offer;
 use Bahuma\GHMittagessen\Participation;
+use Bahuma\GHMittagessen\PasswordIncorrectException;
 use Bahuma\GHMittagessen\Restaurant;
 use Bahuma\GHMittagessen\User;
+use Bahuma\GHMittagessen\UserNotFoundException;
+use Slim\Slim;
 
 require_once('../vendor/autoload.php');
 
+// Create connection to the database
 $db = new PDO('mysql:dbname=mittagesser;host=localhost', 'test', 'testpw');
 
+// Create connection to the joomla intranet to add the ability to login via intranet account
+$userdb = new PDO('mysql:dbname=intranet;host=localhost', 'test', 'testpw');
 
+/**
+ * Send data to the user in JSON Format
+ *
+ * @param $data mixed The data which schould be send to the user
+ */
 function outputJSON($data) {
     header("Content-Type: application/json");
     echo json_encode($data);
     exit;
 }
 
+function outputError($message, $code) {
+    header("Content-Type: application/json");
 
-$app = new \Slim\Slim();
+    $response = new stdClass();
+    $response->status = "error";
+    $response->code = $code;
+    $response->message = $message;
+    echo json_encode($response);
+    exit;
+}
+
+
+$app = new Slim();
 
 $app->get('/test', function () {
     echo "It is running!!!";
@@ -85,6 +109,40 @@ $app->post('/offer', function() use ($app) {
 
 $app->get('/user/:id', function($id) {
     outputJSON(User::getById($id));
+});
+
+$app->post('/auth/login', function() use ($app) {
+    $body = json_decode($app->request->getBody());
+
+    try {
+        $user = User::getByUsername($body->username);
+
+        try {
+            $user->login($body->password);
+
+            if ($user) {
+                outputJSON(array(
+                    'status' => 'success',
+                    'message' => 'User logged in'
+                ));
+            }
+
+        } catch (PasswordIncorrectException $e) {
+            outputError($e->getMessage(), $e->getCode());
+        }
+    } catch (UserNotFoundException $e) {
+        outputError($e->getMessage(), $e->getCode());
+    }
+});
+
+$app->get('/auth/current', function() {
+    $user = User::getLoggedInUser();
+//    print_r($user);
+
+    if ($user)
+        outputJSON($user);
+    else
+        outputError('Not logged in', 100);
 });
 
 $app->run();
