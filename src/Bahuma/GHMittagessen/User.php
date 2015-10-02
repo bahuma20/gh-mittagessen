@@ -41,6 +41,11 @@ class User extends DataObject {
         return $user;
     }
 
+    /**
+     * @param $username string
+     * @return User
+     * @throws UserNotFoundException
+     */
     public static function getByUsername($username) {
         /**
          * @var $userdb \PDO
@@ -51,6 +56,9 @@ class User extends DataObject {
         $stmt = $userdb->prepare("SELECT `id` FROM jos_users WHERE username = ?");
         $stmt->execute(array($username));
 
+        if ($stmt->rowCount() == 0)
+            throw new UserNotFoundException();
+
         $dataFromDB = $stmt->fetch(\PDO::FETCH_ASSOC);
 
         $user = User::getById($dataFromDB['id']);
@@ -58,6 +66,10 @@ class User extends DataObject {
         return $user;
     }
 
+    /**
+     * @param $password string
+     * @throws PasswordIncorrectException
+     */
     public function login($password) {
         // Split the password hash in hash and salt
         list($hash,$salt) = explode(':', $this->getPasswordHash());
@@ -67,10 +79,10 @@ class User extends DataObject {
 
         // check if successfull
         if ($crypto==$hash) {
-            print 'Login successfull';
             $_SESSION['userID'] = $this->getId();
+            return true;
         } else {
-            return false;
+            throw new PasswordIncorrectException();
         }
 
     }
@@ -93,6 +105,8 @@ class User extends DataObject {
             'username' => $this->getUsername(),
             'email' => $this->getEmail()
         );
+
+        return $result;
     }
 
 
