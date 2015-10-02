@@ -179,7 +179,7 @@ abstract class DataObject implements \JsonSerializable {
 
         foreach($classVars['fields'] as $field_name) {
             $getter = "get" . str_replace(' ', '', ucwords(str_replace('_', ' ', $field_name)));
-            $result[$field_name] = $this->$getter();
+            $result[$field_name] = $this->$getter(true);
         }
 
         return $result;
