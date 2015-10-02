@@ -6,7 +6,7 @@ use Bahuma\GHMittagessen\Participation;
 use Bahuma\GHMittagessen\Restaurant;
 use Carbon\Carbon;
 
-require_once('vendor/autoload.php');
+require_once('../vendor/autoload.php');
 
 // Restaurants
 

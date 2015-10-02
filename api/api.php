@@ -4,7 +4,7 @@ use Bahuma\GHMittagessen\Offer;
 use Bahuma\GHMittagessen\Participation;
 use Bahuma\GHMittagessen\Restaurant;
 
-require_once('vendor/autoload.php');
+require_once('../vendor/autoload.php');
 
 $db = new PDO('mysql:dbname=mittagesser;host=localhost', 'test', 'testpw');
 
