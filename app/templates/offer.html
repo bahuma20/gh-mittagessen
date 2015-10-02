@@ -27,7 +27,7 @@
                 <tbody>
                     <tr md-auto-select ng-repeat="participation in offer.participations">
                         <td>{{participation.user.name}}</a></td>
-                        <td>{{participation.order}}</td>
+                        <td><p ng-bind-html="participation.order|newlines|unsafe"></p></td>
                     </tr>
                 </tbody>
             </table>
