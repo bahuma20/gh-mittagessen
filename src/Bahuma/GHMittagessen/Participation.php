@@ -40,6 +40,33 @@ class Participation extends DataObject{
 
 
 
+    /**
+     * @param $id
+     * @return DataObject
+     */
+    public static function getByOfferId($offerId) {
+        /**
+         * @var $db \PDO
+         */
+        global $db;
+
+        // Prepare SELECT
+        $stmt = $db->prepare("SELECT id FROM ". self::$tableName ." WHERE offer = :offer_id");
+        $stmt->bindParam(":offer_id", $offerId);
+        $stmt->execute();
+
+        $objectIds = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+
+        $objects = array();
+
+        foreach ($objectIds as $objectId) {
+            $objects[] = self::getById($objectId['id']);
+        }
+
+        return $objects;
+    }
+
+
 
 
     /**
