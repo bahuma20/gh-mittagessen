@@ -145,6 +145,12 @@ $app->get('/auth/current', function() {
         outputError('Not logged in', 100);
 });
 
+$app->get('/auth/logout', function() {
+    User::logout();
+
+    outputJSON(array('status'=>'success'));
+});
+
 $app->run();
 
 
