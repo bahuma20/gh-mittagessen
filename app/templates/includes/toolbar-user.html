@@ -1,0 +1,20 @@
+<md-icon> person </md-icon>
+<span ng-show="!loggedIn"><a href="#/login">Login</a></span>
+<span ng-show="loggedIn">
+    {{loggedInUser.name}}
+    <md-menu md-position-mode="target-right target" >
+        <md-button aria-label="Open demo menu" class="md-icon-button" ng-click="$mdOpenMenu($event)">
+            <md-icon md-menu-origin> more_vert </md-icon>
+        </md-button>
+        <md-menu-content width="4" >
+            <md-menu-item>
+                <md-button href="#/logout">
+                    <div layout="row">
+                        <md-icon md-menu-align-target> lock </md-icon>
+                        Logout
+                    </div>
+                </md-button>
+            </md-menu-item>
+        </md-menu-content>
+    </md-menu>
+</span>

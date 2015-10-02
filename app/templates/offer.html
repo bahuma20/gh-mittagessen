@@ -3,12 +3,14 @@
         <md-button class="md-icon-button" aria-label="Menu" href="#/offers">
             <md-icon> arrow_back </md-icon>
         </md-button>
-        <h2><span>{{offer.user}} holt bei {{offer.restaurant.name}}</span></h2>
+        <h2><span>{{offer.user.name}} holt bei {{offer.restaurant.name}}</span></h2>
+        <span class="flex"></span>
+        <div ng-include src="'templates/includes/toolbar-user.html'"></div>
     </div>
 </md-toolbar>
 
 <md-content class="md-padding">
-    Wer was will kann sich bis {{offer.order_until.format('HH:mm')}} Uhr eintragen.
+    <p>Wer was will kann sich bis {{offer.order_until.format('HH:mm')}} Uhr eintragen.</p>
 
     <md-card>
         <md-data-table-toolbar ng-show="!selected.length">
@@ -17,31 +19,34 @@
         <md-data-table-container>
             <table md-data-table>
                 <thead md-order="query.order">
-                <tr>
-                    <th name="Wer"></th>
-                    <th name="Was"></th>
-                </tr>
+                    <tr>
+                        <th name="Wer"></th>
+                        <th name="Was"></th>
+                    </tr>
                 </thead>
                 <tbody>
-                <tr md-auto-select ng-repeat="participation in offer.participations">
-                    <td>{{participation.user}}</a></td>
-                    <td>{{participation.order}}</td>
-                </tr>
-                <!--<tr md-auto-select ng-repeat="item in items">-->
-                <!--<td>{{item.name}}</td>-->
-                <!--<td><span ng-repeat="cat in item.category">{{cat.name}}<span ng-if="!$last">, </span></span></td>-->
-                <!--<td show-unit>{{item.price}}</td>-->
-                <!--<td>-->
-                <!--<md-button class="md-icon-button" ng-click="edit(item._id)" aria-label="Edit">-->
-                <!--<md-icon> edit </md-icon>-->
-                <!--</md-button>-->
-                <!--<md-button class="md-icon-button" ng-click="delete(item._id, $event)" aria-label="Delete">-->
-                <!--<md-icon> delete </md-icon>-->
-                <!--</md-button>-->
-                <!--</td>-->
-                <!--</tr>-->
+                    <tr md-auto-select ng-repeat="participation in offer.participations">
+                        <td>{{participation.user.name}}</a></td>
+                        <td>{{participation.order}}</td>
+                    </tr>
                 </tbody>
             </table>
         </md-data-table-container>
     </md-card>
+
+    <div ng-show="!loggedIn">
+        <p style="margin-top: 5em; text-align:center">Um auch etwas zu bestellen musst du dich einloggen.</p>
+        <p style="text-align:center">
+            <md-button class="md-raised md-primary" href="#/login">Login</md-button>
+        </p>
+    </div>
+
+    <div ng-show="loggedIn" style="margin-top: 5em;">
+        <h3>Auch etwas bestellen:</h3>
+        <md-input-container md-no-float>
+            <label>Was möchtest du bestellen?</label>
+            <textarea ng-model="participation.order" columns="5"></textarea>
+        </md-input-container>
+        <md-button class="md-raised md-primary" ng-click="saveParticipation(participation, offer)">Jetzt bestellen</md-button>
+    </div>
 </md-content>
