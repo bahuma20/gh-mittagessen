@@ -10,15 +10,19 @@ use Bahuma\GHMittagessen\PasswordIncorrectException;
 use Bahuma\GHMittagessen\Restaurant;
 use Bahuma\GHMittagessen\User;
 use Bahuma\GHMittagessen\UserNotFoundException;
+use Nette\Mail\Message;
+use Nette\Mail\SendmailMailer;
 use Slim\Slim;
 
 require_once('../vendor/autoload.php');
 
+require_once('config.php');
+
 // Create connection to the database
-$db = new PDO('mysql:dbname=mittagesser;host=localhost', 'test', 'testpw');
+$db = new PDO('mysql:dbname='. $config["database"]["name"] .';host='. $config["database"]["host"], $config["database"]["user"], $config["database"]["pass"]);
 
 // Create connection to the joomla intranet to add the ability to login via intranet account
-$userdb = new PDO('mysql:dbname=intranet;host=localhost', 'test', 'testpw');
+$userdb = new PDO('mysql:dbname='. $config["user_database"]["name"] .';host='. $config["user_database"]["host"], $config["user_database"]["user"], $config["user_database"]["pass"]);
 
 /**
  * Send data to the user in JSON Format
@@ -103,6 +107,11 @@ $app->get('/offer/:id/participation', function($id){
 
 
 $app->post('/offer', function() use ($app) {
+    /**
+     * @var $config array
+     */
+    global $config;
+
     $body = json_decode($app->request->getBody());
 
     $offer = new Offer();
@@ -110,6 +119,44 @@ $app->post('/offer', function() use ($app) {
     $offer->setRestaurant($body->restaurant);
     $offer->setOrderUntil($body->order_until);
     $offer->save();
+
+    // Load user
+    $user = User::getById($body->user);
+
+    // Load restaurant
+    $restaurant = Restaurant::getById($body->restaurant);
+
+    // Send Mail
+    $mailSubscriptions = MailSubscription::getAll();
+
+    $receivers = array();
+
+    foreach ($mailSubscriptions as $mailSubscription) {
+        $receivers[] = User::getById($mailSubscription->getUser());
+    }
+
+    $mail = new Message();
+    $mail->setFrom('Mittagessen Plattform <mittagessen@example.com>')
+         ->setSubject($user->getName() . ' holt Essen bei ' . $restaurant->getName())
+         ->setBody("Wenn du auch was willst, schaue auf " . $config['platform_url'] . "/app/#/offers/" . $offer->getId());
+
+    foreach ($receivers as $receiver) {
+        $mail->addTo($receiver->getEmail());
+    }
+
+    switch ($config['mail_method']) {
+        case "sendmail":
+            $mailer = new SendmailMailer();
+            break;
+
+        case "smtp":
+            $mailer = new \Nette\Mail\SmtpMailer($config['smtpmail_settings']);
+    }
+
+    $mailer->send($mail);
+
+    print "<html><pre>";
+    print_r($receivers);
 });
 
 
