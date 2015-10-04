@@ -61,6 +61,10 @@ $app->post('/restaurant', function() use ($app) {
     $restaurant = new Restaurant();
     $restaurant->setName($body->name);
     $restaurant->setSpeisekartenUrl($body->speisekarten_url);
+    print_r($body);
+    if (property_exists($body, 'image_url'))
+        $restaurant->setImageUrl($body->image_url);
+
     $restaurant->save();
 
 });

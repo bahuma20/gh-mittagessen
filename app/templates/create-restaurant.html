@@ -10,6 +10,7 @@
 </md-toolbar>
 
 <md-content class="md-padding" id="popup-container">
+
     <md-input-container>
         <label for="name">Name</label>
         <input type="text" ng-model="newRestaurant.name" id="name">
@@ -17,7 +18,7 @@
 
     <form action="../api/upload/image" method="post" ng-upload="bildUploadCompleted(content)" enctype="multipart/form-data" name="imageUpload" layout>
         <md-input-container style="width: 50%;">
-            <label>Bild</label>
+            <label>Bild (optional)</label>
             <input type="text" ng-model="newRestaurant.image">
         </md-input-container>
         <div>
@@ -38,14 +39,5 @@
         </div>
     </form>
 
-    <form name="restaurantForm" novalidate>
-
-
-        <md-input-container>
-            <label>Bestellung möglich bis</label>
-            <input type="text" ng-model="newRestaurant.name">
-        </md-input-container>
-
-        <input type="submit" value="Speichern" class="md-button md-raised md-primary">
-    </form>
+    <input type="submit" value="Speichern" class="md-button md-raised md-primary" ng-disabled="submitButtonDisabled()" ng-click="save(newRestaurant)">
 </md-content>

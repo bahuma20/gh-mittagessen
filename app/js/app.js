@@ -168,8 +168,11 @@ angular.module('ghMittagessen', ['ngMaterial', 'md.data.table', 'ngRoute', 'ngUp
             });
         };
     }])
-    .controller("CreateRestaurantCtrl", ["$scope", "$http", "$mdDialog", function($scope, $http, $mdDialog) {
-        $scope.newRestaurant = {};
+    .controller("CreateRestaurantCtrl", ["$scope", "$http", "$mdDialog", "$location", "$mdToast", function($scope, $http, $mdDialog, $location, $mdToast) {
+        $scope.newRestaurant = {
+            name: "",
+            speisekarten_url: ""
+        };
 
         $scope.bildUploadCompleted = function (content) {
             console.log(content);
@@ -217,12 +220,24 @@ angular.module('ghMittagessen', ['ngMaterial', 'md.data.table', 'ngRoute', 'ngUp
             $scope.newRestaurant.speisekarten_url = assetsUrl + "/" + content.filename;
         };
 
+        $scope.submitButtonDisabled = function() {
+            if ($scope.newRestaurant.speisekarten_url == "" || $scope.newRestaurant.name == "")
+                return true;
+
+            else {
+                return false;
+            }
+        };
+
         $scope.save = function(restaurant) {
 
             $http.post('../api/restaurant', {
-                restaurant: offer.restaurant,
-                user: $rootScope.loggedInUser.id,
-                order_until: offer.order_until
+                name: restaurant.name,
+                image_url: restaurant.image,
+                speisekarten_url: restaurant.speisekarten_url
+            }).success(function(data) {
+                $mdToast.show($mdToast.simple().content('Restaurant hinzugefügt').position('bottom right'));
+                $location.path("/offers/create");
             });
         };
     }])
@@ -253,7 +268,7 @@ angular.module('ghMittagessen', ['ngMaterial', 'md.data.table', 'ngRoute', 'ngUp
                         $rootScope.loggedInUser = data;
                         $rootScope.loggedIn = true;
                         $location.path("/offers");
-                        $mdToast.show($mdToast.simple().content("Eingeloggt als " + data.name).position("top right"));
+                        $mdToast.show($mdToast.simple().content("Eingeloggt als " + data.name).position("bottom right"));
                         $scope.loading = false;
                     });
                 } else {
@@ -264,17 +279,18 @@ angular.module('ghMittagessen', ['ngMaterial', 'md.data.table', 'ngRoute', 'ngUp
                     else if (data.code == 2)
                         message = "Passwort falsch";
 
-                    $mdToast.show($mdToast.simple().content(message).position("top right"));
+                    $mdToast.show($mdToast.simple().content(message).position("bottom right"));
                     $scope.loading = false;
                 }
             });
         };
     }])
-    .controller("LogoutCtrl", ["$rootScope", "$location", "$http", function($rootScope, $location, $http) {
+    .controller("LogoutCtrl", ["$rootScope", "$location", "$http", "$mdToast", function($rootScope, $location, $http, $mdToast) {
         $http.get('../api/auth/logout').success(function(data) {
             console.log("Logged out");
             $rootScope.loggedIn = false;
             $rootScope.loggedUser = {};
+            $mdToast.show($mdToast.simple().content("Sie wurden ausgeloggt.").position("bottom right"));
             $location.path("/offers");
         });
     }]);
