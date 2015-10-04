@@ -87,19 +87,29 @@ angular.module('ghMittagessen', ['ngMaterial', 'md.data.table', 'ngRoute', 'ngUp
             $scope.offers = data;
 
             angular.forEach(data, function(val, key){
-                // Load Restaurant data
-                $http.get('../api/restaurant/' + val.restaurant).success(function(data){
-                    $scope.offers[key].restaurant = data;
-                });
-
-                // Load User data
-                $http.get('../api/user/' + val.user).success(function(data){
-                    $scope.offers[key].user = data;
-                });
-
                 // Convert date to JS Date
                 $scope.offers[key].order_until = moment($scope.offers[key].order_until);
+
+                // Remove if outdated
+                if ($scope.offers[key].order_until.isBefore(moment().add(2, 'hours'))) {
+                    $scope.offers[key].outdated = true;
+                } else {
+                    $scope.offers[key].outdated = false;
+
+                    // Load Restaurant data
+                    $http.get('../api/restaurant/' + val.restaurant).success(function(data){
+                        $scope.offers[key].restaurant = data;
+                    });
+
+                    // Load User data
+                    $http.get('../api/user/' + val.user).success(function(data){
+                        $scope.offers[key].user = data;
+                    });
+                }
             });
+
+            window.debugtest = $scope.offers;
+
         });
     }])
     .controller('OfferCtrl', ['$scope', '$rootScope', '$routeParams', '$http', "$mdToast", function($scope, $rootScope, $routeParams, $http, $mdToast){
@@ -304,5 +314,23 @@ angular.module('ghMittagessen', ['ngMaterial', 'md.data.table', 'ngRoute', 'ngUp
             $mdToast.show($mdToast.simple().content("Sie wurden ausgeloggt.").position("bottom right"));
             $location.path("/offers");
         });
+    }])
+    .controller("MailNotificationController", ["$scope", "$http", "$rootScope", "$mdToast", function($scope, $http, $rootScope, $mdToast){
+        $scope.notificationStatus = false;
+
+        $http.get("../api/mailsubscription/" + $rootScope.loggedInUser.id).success(function(data) {
+            $scope.notificationStatus = data.subscribed;
+        });
+
+        $scope.change = function(status) {
+            if (status) {
+                $http.get("../api/mailsubscription/subscribe/" + $rootScope.loggedInUser.id).success(function(){
+                    $mdToast.show($mdToast.simple().content("E-Mail Benachrichtigungen aktiviert").position("bottom right"));
+                });
+            } else {
+                $http.get("../api/mailsubscription/unsubscribe/" + $rootScope.loggedInUser.id).success(function() {
+                    $mdToast.show($mdToast.simple().content("E-Mail Benachrichtigungen deaktiviert").position("bottom right"));
+                });
+            }
+        }
     }]);
-;

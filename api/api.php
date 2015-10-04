@@ -2,6 +2,8 @@
 
 session_start();
 
+use Bahuma\GHMittagessen\MailSubscription;
+use Bahuma\GHMittagessen\MailSubscriptionNotFoundException;
 use Bahuma\GHMittagessen\Offer;
 use Bahuma\GHMittagessen\Participation;
 use Bahuma\GHMittagessen\PasswordIncorrectException;
@@ -214,6 +216,36 @@ $app->post('/upload/file', function() use ($app) {
             "errors" => $file->getErrors()
         ));
         exit;
+    }
+});
+
+$app->get("/mailsubscription/:uid", function($uid) {
+    try {
+        $mailSubscription = MailSubscription::getByUserId($uid);
+        $subscribed = true;
+    } catch (MailSubscriptionNotFoundException $e) {
+        $subscribed = false;
+    }
+
+    outputJSON(array("subscribed" => $subscribed));
+});
+
+$app->get("/mailsubscription/subscribe/:uid", function($uid) {
+    try {
+        $mailSubscription = MailSubscription::getByUserId($uid);
+    } catch (MailSubscriptionNotFoundException $e) {
+        $mailSubscription = new MailSubscription();
+        $mailSubscription->setUser($uid);
+        $mailSubscription->save();
+    }
+});
+
+$app->get("/mailsubscription/unsubscribe/:uid", function($uid) {
+    try {
+        $mailSubscription = MailSubscription::getByUserId($uid);
+        $mailSubscription->delete();
+    } catch (MailSubscriptionNotFoundException $e) {
+
     }
 });
 

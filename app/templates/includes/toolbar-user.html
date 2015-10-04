@@ -15,6 +15,12 @@
                     </div>
                 </md-button>
             </md-menu-item>
+
+            <md-menu-item ng-controller="MailNotificationController">
+                <md-button>
+                    <md-checkbox ng-model="notificationStatus" aria-label="Mail Benachrichtigung" ng-change="change(notificationStatus)">Mail-Benachrichtigung</md-checkbox>
+                </md-button>
+            </md-menu-item>
         </md-menu-content>
     </md-menu>
 </span>
