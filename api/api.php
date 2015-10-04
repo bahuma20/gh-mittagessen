@@ -18,6 +18,9 @@ $db = new PDO('mysql:dbname=mittagesser;host=localhost', 'test', 'testpw');
 // Create connection to the joomla intranet to add the ability to login via intranet account
 $userdb = new PDO('mysql:dbname=intranet;host=localhost', 'test', 'testpw');
 
+// Setup file storage
+$file_storage = new \Upload\Storage\FileSystem("../assets");
+
 /**
  * Send data to the user in JSON Format
  *
@@ -102,7 +105,7 @@ $app->post('/offer', function() use ($app) {
     $offer = new Offer();
     $offer->setUser($body->user);
     $offer->setRestaurant($body->restaurant);
-    $offer->setOrderUntil(new \Carbon\Carbon($body->order_until));
+    $offer->setOrderUntil($body->order_until);
     $offer->save();
 });
 
@@ -149,6 +152,31 @@ $app->get('/auth/logout', function() {
     User::logout();
 
     outputJSON(array('status'=>'success'));
+});
+
+$app->post('/upload', function() use ($app, $file_storage) {
+    $file = new Upload\File("file", $file_storage);
+
+    $file->addValidations(array(
+        new Upload\Validation\Mimetype(array('image/png', 'image/gif', 'image/jpeg', 'video/JPEG', 'video/jpeg2000', 'application/pdf'))
+    ));
+
+    $file->setName(uniqid());
+
+    try {
+        // Success!
+        $file->upload();
+        outputJSON(array(
+            "status" => "success",
+            "filename" => $file->getName() . '.' . $file->getExtension()
+        ));
+    } catch (\Exception $e) {
+        outputJSON(array(
+            "status" => "error",
+            "errors" => $file->getErrors()
+        ));
+    }
+
 });
 
 $app->run();
