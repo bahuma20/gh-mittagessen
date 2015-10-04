@@ -10,7 +10,6 @@
 namespace Bahuma\GHMittagessen;
 
 use Bahuma\MiniORM\DataObject;
-use Carbon\Carbon;
 
 class Offer extends DataObject {
     /**
@@ -34,7 +33,7 @@ class Offer extends DataObject {
     private $restaurant;
 
     /**
-     * @var Carbon
+     * @var string
      */
     private $order_until;
 
@@ -81,24 +80,15 @@ class Offer extends DataObject {
     /**
      * @return Carbon
      */
-    public function getOrderUntil($forApi=false)
-    {
-        if ($forApi)
-            return $this->order_until->toIso8601String();
-
+    public function getOrderUntil() {
         return $this->order_until;
     }
 
     /**
-     * @param Carbon $order_until
+     * @param string $order_until
      */
     public function setOrderUntil($order_until)
     {
-
-        if(is_string($order_until)) {
-            $order_until = new Carbon($order_until);
-        }
-
         $this->order_until = $order_until;
     }
 
