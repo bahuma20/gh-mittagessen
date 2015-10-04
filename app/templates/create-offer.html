@@ -10,7 +10,7 @@
 </md-toolbar>
 
 <md-content class="md-padding">
-    <form name="offerForm" novalidate>
+    <form name="offerForm" novalidate ng-submit="save(newOffer)">
         <div layout layout-sm="column">
             <md-input-container style="width: 70%">
                 <label>Restaurant</label>
@@ -19,9 +19,6 @@
                         {{restaurant.name}}
                     </md-option>
                 </md-select>
-                <!--<div ng-messages="offerForm.restaurant.$error" ng-show="offerForm.restaurant.$dirty">-->
-                    <!--<div ng-message="required">Restaurant ist erforderlich!</div>-->
-                <!--</div>-->
             </md-input-container>
 
             <div>

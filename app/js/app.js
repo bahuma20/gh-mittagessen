@@ -144,7 +144,7 @@ angular.module('ghMittagessen', ['ngMaterial', 'md.data.table', 'ngRoute', 'ngUp
         $scope.loadOffer();
 
     }])
-    .controller("CreateOfferCtrl", ["$scope", "$rootScope", "$location", "$http", function($scope, $rootScope, $location, $http) {
+    .controller("CreateOfferCtrl", ["$scope", "$rootScope", "$location", "$http", "$mdToast", function($scope, $rootScope, $location, $http, $mdToast) {
         if (!$rootScope.loggedIn)
             $location.path("/login");
 
@@ -165,6 +165,9 @@ angular.module('ghMittagessen', ['ngMaterial', 'md.data.table', 'ngRoute', 'ngUp
                 restaurant: offer.restaurant,
                 user: $rootScope.loggedInUser.id,
                 order_until: offer.order_until
+            }).success(function(data){
+                $mdToast.show($mdToast.simple().content('Angebot hinzugefügt').position('bottom right'));
+                $location.path("/offers");
             });
         };
     }])
