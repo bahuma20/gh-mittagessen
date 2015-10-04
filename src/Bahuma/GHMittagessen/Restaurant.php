@@ -18,7 +18,7 @@ class Restaurant extends DataObject {
     /**
      * @var array
      */
-    public static $fields = array('id', 'name', 'speisekarten_url');
+    public static $fields = array('id', 'name', 'speisekarten_url', 'image_url');
 
     /**
      * @var string
@@ -29,6 +29,11 @@ class Restaurant extends DataObject {
      * @var string
      */
     private $speisekarten_url;
+
+    /**
+     * @var string
+     */
+    private $image_url = "restaurant_placeholder.png";
 
 
 
@@ -64,4 +69,22 @@ class Restaurant extends DataObject {
     {
         $this->speisekarten_url = $speisekarten_url;
     }
+
+    /**
+     * @return string
+     */
+    public function getImageUrl()
+    {
+        return $this->image_url;
+    }
+
+    /**
+     * @param string $image_url
+     */
+    public function setImageUrl($image_url)
+    {
+        $this->image_url = $image_url;
+    }
+
+
 }

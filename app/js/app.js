@@ -6,7 +6,7 @@ moment.locale('de');
 
 angular = angular || {};
 
-angular.module('ghMittagessen', ['ngMaterial', 'md.data.table', 'ngRoute'])
+angular.module('ghMittagessen', ['ngMaterial', 'md.data.table', 'ngRoute', 'ngUpload'])
     .config(function($mdThemingProvider, $mdIconProvider){
         $mdThemingProvider.theme('default')
             .primaryPalette('teal')
@@ -27,6 +27,11 @@ angular.module('ghMittagessen', ['ngMaterial', 'md.data.table', 'ngRoute'])
             .when('/offers/:offer_id', {
                 templateUrl: "templates/offer.html",
                 controller: "OfferCtrl"
+            })
+
+            .when('/restaurants/add',{
+                templateUrl: "templates/create-restaurant.html",
+                controller: "CreateRestaurantCtrl"
             })
 
             .when('/login', {
@@ -157,6 +162,64 @@ angular.module('ghMittagessen', ['ngMaterial', 'md.data.table', 'ngRoute'])
             offer.order_until = offer.tempTime.toISOString();
 
             $http.post('../api/offer', {
+                restaurant: offer.restaurant,
+                user: $rootScope.loggedInUser.id,
+                order_until: offer.order_until
+            });
+        };
+    }])
+    .controller("CreateRestaurantCtrl", ["$scope", "$http", "$mdDialog", function($scope, $http, $mdDialog) {
+        $scope.newRestaurant = {};
+
+        $scope.bildUploadCompleted = function (content) {
+            console.log(content);
+
+            if (content.status == "error") {
+                $mdDialog.show(
+                    $mdDialog.alert()
+                        .parent(angular.element(document.querySelector('body')))
+                        .clickOutsideToClose(true)
+                        .title('Fehler beim Upload')
+                        .content('Es können nur Bild-Dateien (png, jpg, jpeg) hochgeladen werden.')
+                        .ariaLabel('Uploadfehler')
+                        .ok('OK')
+                );
+                return false;
+            }
+
+            $scope.newRestaurant.image = content.filename;
+        };
+
+        $scope.speisekartenUploadCompleted = function (content) {
+            console.log(content);
+
+            if (content.status == "error") {
+                $mdDialog.show(
+                    $mdDialog.alert()
+                        .parent(angular.element(document.querySelector('body')))
+                        .clickOutsideToClose(true)
+                        .title('Fehler beim Upload')
+                        .content('Es können nur PDF Dateien hochgeladen werden.')
+                        .ariaLabel('Uploadfehler')
+                        .ok('OK')
+                );
+                return false;
+            }
+
+            var path = window.location.pathname.substring(0, window.location.pathname.length - 1);
+            path = path.substring(1);
+            var pathSegements = path.split("/");
+            pathSegements.pop();
+            path = pathSegements.join("/");
+
+            var assetsUrl = window.location.protocol + "//" + window.location.host + "/" + path + "/assets/files";
+
+            $scope.newRestaurant.speisekarten_url = assetsUrl + "/" + content.filename;
+        };
+
+        $scope.save = function(restaurant) {
+
+            $http.post('../api/restaurant', {
                 restaurant: offer.restaurant,
                 user: $rootScope.loggedInUser.id,
                 order_until: offer.order_until

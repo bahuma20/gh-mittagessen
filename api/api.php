@@ -18,9 +18,6 @@ $db = new PDO('mysql:dbname=mittagesser;host=localhost', 'test', 'testpw');
 // Create connection to the joomla intranet to add the ability to login via intranet account
 $userdb = new PDO('mysql:dbname=intranet;host=localhost', 'test', 'testpw');
 
-// Setup file storage
-$file_storage = new \Upload\Storage\FileSystem("../assets");
-
 /**
  * Send data to the user in JSON Format
  *
@@ -154,11 +151,14 @@ $app->get('/auth/logout', function() {
     outputJSON(array('status'=>'success'));
 });
 
-$app->post('/upload', function() use ($app, $file_storage) {
+$app->post('/upload/image', function() use ($app) {
+    // Setup file storage
+    $file_storage = new \Upload\Storage\FileSystem("../assets/images");
+
     $file = new Upload\File("file", $file_storage);
 
     $file->addValidations(array(
-        new Upload\Validation\Mimetype(array('image/png', 'image/gif', 'image/jpeg', 'video/JPEG', 'video/jpeg2000', 'application/pdf'))
+        new Upload\Validation\Mimetype(array('image/png', 'image/gif', 'image/jpeg', 'video/JPEG', 'video/jpeg2000'))
     ));
 
     $file->setName(uniqid());
@@ -166,17 +166,51 @@ $app->post('/upload', function() use ($app, $file_storage) {
     try {
         // Success!
         $file->upload();
-        outputJSON(array(
+        header("Content-Type: text/html");
+        print json_encode(array(
             "status" => "success",
             "filename" => $file->getName() . '.' . $file->getExtension()
         ));
+        exit;
     } catch (\Exception $e) {
-        outputJSON(array(
+        header("Content-Type: text/html");
+        print json_encode(array(
             "status" => "error",
             "errors" => $file->getErrors()
         ));
+        exit;
     }
+});
 
+$app->post('/upload/file', function() use ($app) {
+    // Setup file storage
+    $file_storage = new \Upload\Storage\FileSystem("../assets/files");
+
+    $file = new Upload\File("file", $file_storage);
+
+    $file->addValidations(array(
+        new Upload\Validation\Mimetype(array('application/pdf'))
+    ));
+
+    $file->setName(uniqid());
+
+    try {
+        // Success!
+        $file->upload();
+        header("Content-Type: text/html");
+        print json_encode(array(
+            "status" => "success",
+            "filename" => $file->getName() . '.' . $file->getExtension()
+        ));
+        exit;
+    } catch (\Exception $e) {
+        header("Content-Type: text/html");
+        print json_encode(array(
+            "status" => "error",
+            "errors" => $file->getErrors()
+        ));
+        exit;
+    }
 });
 
 $app->run();
