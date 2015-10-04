@@ -10,18 +10,30 @@
 </md-toolbar>
 
 <md-content class="md-padding">
-    <md-input-container>
-        <label>Restaurant</label>
-        <md-select ng-model="newOffer.restaurant">
-            <md-option ng-repeat="restaurant in restaurants|orderBy:'name'" value="{{restaurant.id}}">
-                {{restaurant.name}}
-            </md-option>
-        </md-select>
-        <!--<a href="#/restaurants/add">Neues Restaurant hinzufügen</a>-->
-    </md-input-container>
-    <md-input-container>
-        <label>Bestellung möglich bis</label>
-        <input type="time" value="12:00" ng-model="newOffer.tempTime">
-    </md-input-container>
-    <md-button class="md-primary md-raised" ng-click="save(newOffer)">Speichern</md-button>
+    <form name="offerForm" novalidate>
+        <div layout layout-sm="column">
+            <md-input-container style="width: 70%">
+                <label>Restaurant</label>
+                <md-select ng-model="newOffer.restaurant" required name="restaurant">
+                    <md-option ng-repeat="restaurant in restaurants|orderBy:'name'" value="{{restaurant.id}}">
+                        {{restaurant.name}}
+                    </md-option>
+                </md-select>
+                <!--<div ng-messages="offerForm.restaurant.$error" ng-show="offerForm.restaurant.$dirty">-->
+                    <!--<div ng-message="required">Restaurant ist erforderlich!</div>-->
+                <!--</div>-->
+            </md-input-container>
+
+            <div>
+                <md-button href="#/restaurants/add">Neues Restaurant hinzufügen</md-button>
+            </div>
+        </div>
+
+        <md-input-container>
+            <label>Bestellung möglich bis</label>
+            <input type="datetime-local" value="12:00" ng-model="newOffer.tempTime">
+        </md-input-container>
+        <!--<md-button class="md-primary md-raised" ng-click="save(newOffer)">Speichern</md-button>-->
+        <input type="submit" value="Speichern" class="md-button md-raised md-primary">
+    </form>
 </md-content>
