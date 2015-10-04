@@ -169,8 +169,21 @@ abstract class DataObject implements \JsonSerializable {
         return $this;
     }
 
-    function jsonSerialize()
-    {
+    public function delete() {
+        /**
+         * @var $db \PDO
+         */
+        global $db;
+
+        // Get static properties from sub class
+        $classname = get_called_class();
+        $classVars = get_class_vars($classname);
+
+        $stmt = $db->prepare("DELETE FROM " . $classVars['tableName'] . " WHERE id = ?");
+        $stmt->execute(array($this->getId()));
+    }
+
+    function jsonSerialize() {
         // Get static properties from sub class
         $classname = get_called_class();
         $classVars = get_class_vars($classname);
