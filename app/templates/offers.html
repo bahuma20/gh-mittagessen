@@ -11,34 +11,22 @@
 </md-toolbar>
 
 <md-content class="md-padding">
-    <md-card>
-        <md-data-table-container>
-            <table md-data-table>
-                <thead md-order="query.order">
-                    <tr>
-                        <th name="Wo"></th>
-                        <th name="Wer"></th>
-                        <th name="Bestellen bis"></th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr md-auto-select ng-repeat="offer in offers">
-                        <td>{{offer.restaurant.name}}</td>
-                        <td>{{offer.user.name}}</td>
-                        <td>{{offer.order_until.format('HH:mm')}} Uhr</td>
-                        <td>
-                            <md-button class="md-icon-button" aria-label="Ich will was" href="#/offers/{{offer.id}}">
-                                <md-icon> send </md-icon>
-                            </md-button>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </md-data-table-container>
-    </md-card>
+    <div class='md-padding' layout="row" layout-wrap>
+        <md-card style="width: 31.9%" ng-repeat="offer in offers">
+            <img src="http://placehold.it/300x150" class="md-card-image" alt="restaurant image">
+            <md-card-content>
+                <h2>{{offer.restaurant.name}}</h2>
+                <p>{{offer.user.name}} holt was.<br>Bestellen bis {{offer.order_until.format('HH:mm')}} Uhr</p>
+            </md-card-content>
+            <div class="md-actions" layout="row" layout-align="end center">
+                <md-button href="{{offer.restaurant.speisekarte}}" target="_blank">Speisekarte</md-button>
+                <md-button>Bestellen</md-button>
+            </div>
+        </md-card>
+    </div>
 
     <p style="margin-top: 5em">
         <md-button class="md-primary md-raised" href="#/offers/create">Ich hole was</md-button>
     </p>
 </md-content>
+
