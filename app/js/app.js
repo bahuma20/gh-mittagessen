@@ -75,6 +75,14 @@ angular.module('ghMittagessen', ['ngMaterial', 'md.data.table', 'ngRoute', 'ngUp
     .controller('OffersCtrl', ['$scope', '$http', function($scope, $http){
         $scope.offers = [];
 
+        var path = window.location.pathname.substring(0, window.location.pathname.length - 1);
+        path = path.substring(1);
+        var pathSegements = path.split("/");
+        pathSegements.pop();
+        path = pathSegements.join("/");
+
+        $scope.imageBaseUrl = window.location.protocol + "//" + window.location.host + "/" + path + "/assets/images";
+
         $http.get('../api/offer').success(function(data){
             $scope.offers = data;
 
